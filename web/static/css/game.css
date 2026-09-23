@@ -1,0 +1,1167 @@
+/* ==========================================================================
+   🎮 Jev Plays the Game - Web RPG Theme
+   Atmospheric Dark Fantasy & Retro-Modern Dungeon Crawler Styling
+   ========================================================================== */
+
+:root {
+  --bg-deep: #07090e;
+  --bg-dark: #0e131f;
+  --bg-card: #151c2e;
+  --bg-card-hover: #1c263e;
+  --bg-glass: rgba(21, 28, 46, 0.75);
+  --border-color: #263352;
+  --border-highlight: #3b82f6;
+
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --accent-gold: #f59e0b;
+  --accent-gold-glow: rgba(245, 158, 11, 0.35);
+  --accent-red: #ef4444;
+  --accent-red-glow: rgba(239, 68, 68, 0.4);
+  --accent-cyan: #06b6d4;
+  --accent-cyan-glow: rgba(6, 182, 212, 0.35);
+  --accent-green: #10b981;
+  --accent-green-glow: rgba(16, 185, 129, 0.35);
+  --accent-purple: #a855f7;
+  --accent-purple-glow: rgba(168, 85, 247, 0.35);
+
+  --font-display: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+  --font-mono: 'Consolas', 'Courier New', 'Fira Code', monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: radial-gradient(circle at 50% 20%, #151d33 0%, var(--bg-dark) 50%, var(--bg-deep) 100%);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* Atmospheric dungeon scanlines overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.08) 0px,
+    rgba(0, 0, 0, 0.08) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Container */
+.app-container {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Header / Navigation Bar
+   -------------------------------------------------------------------------- */
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 8px var(--accent-gold));
+}
+
+.brand h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #fff 30%, var(--accent-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand .subtitle {
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Controls Toolbar */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mode-toggle-group {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.mode-btn.active {
+  background: var(--accent-cyan);
+  color: #041019;
+  box-shadow: 0 0 12px var(--accent-cyan-glow);
+}
+
+.mode-btn:hover:not(.active) {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.agent-speed-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.agent-speed-control select {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.icon-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--text-muted);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.icon-btn.primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.icon-btn.primary:hover {
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   Dungeon Minimap & Floor Progression Bar
+   -------------------------------------------------------------------------- */
+.minimap-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+  gap: 1.5rem;
+}
+
+.floor-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  white-space: nowrap;
+}
+
+.floor-badge .badge-icon {
+  font-size: 1.2rem;
+}
+
+.room-progress-track {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.room-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--border-color);
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.room-node::after {
+  content: "";
+  position: absolute;
+  right: -0.75rem;
+  top: 50%;
+  width: 0.75rem;
+  height: 2px;
+  background: var(--border-color);
+}
+
+.room-node:last-child::after {
+  display: none;
+}
+
+.room-node.cleared {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+.room-node.current {
+  background: rgba(6, 182, 212, 0.25);
+  border-color: var(--accent-cyan);
+  color: #fff;
+  transform: scale(1.15);
+  box-shadow: 0 0 16px var(--accent-cyan-glow);
+  animation: pulseNode 2s infinite ease-in-out;
+}
+
+@keyframes pulseNode {
+  0%, 100% { box-shadow: 0 0 12px var(--accent-cyan-glow); }
+  50% { box-shadow: 0 0 24px rgba(6, 182, 212, 0.6); }
+}
+
+.room-node.boss {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+/* --------------------------------------------------------------------------
+   Main Grid Layout (Stage + Jev Brain Telemetry)
+   -------------------------------------------------------------------------- */
+.game-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+@media (max-width: 1080px) {
+  .game-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Main Battle Arena (Left / Center) */
+.arena-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Visual Battler Stage */
+.stage-card {
+  position: relative;
+  background: radial-gradient(ellipse at bottom, #1e293b 0%, #0f172a 70%);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.7);
+}
+
+/* Ambient dungeon particle canvas effect */
+.stage-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.room-header-info {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.room-title-box h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.room-title-box p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: 550px;
+  margin-top: 0.25rem;
+}
+
+.phase-pill {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  letter-spacing: 0.8px;
+}
+
+.phase-pill.combat {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--accent-red);
+  color: var(--accent-red);
+}
+
+.phase-pill.explore {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.phase-pill.fork {
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid var(--accent-purple);
+  color: var(--accent-purple);
+}
+
+/* Battler Arena Combatants Layout */
+.combatants-stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 1.5rem 0;
+}
+
+/* Character Card */
+.battler-card {
+  width: 250px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.battler-card.hero {
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.15);
+}
+
+.battler-card.enemy {
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.15);
+}
+
+.battler-portrait {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+.battler-card.hero .battler-portrait {
+  border-color: var(--accent-cyan);
+}
+
+.battler-card.enemy .battler-portrait {
+  border-color: var(--accent-red);
+}
+
+.battler-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.battler-stats-row {
+  display: flex;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.battler-stats-row span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Health Bar Component */
+.hp-bar-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hp-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.hp-track {
+  width: 100%;
+  height: 12px;
+  background: #090d16;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.hp-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hp-fill.danger {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.hp-fill.warning {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+/* VS Badge in Combat */
+.vs-badge {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--accent-gold);
+  background: rgba(0, 0, 0, 0.6);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--accent-gold);
+  box-shadow: 0 0 16px var(--accent-gold-glow);
+}
+
+/* Non-combat Chamber Stage (Treasure, Shrine, Trap, Crossroads) */
+.chamber-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.chamber-icon {
+  font-size: 4.5rem;
+  filter: drop-shadow(0 0 20px var(--accent-gold-glow));
+  animation: floatChamber 3s ease-in-out infinite;
+}
+
+@keyframes floatChamber {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.chamber-desc {
+  font-size: 1rem;
+  color: var(--text-main);
+  max-width: 450px;
+}
+
+/* Floating Damage / Combat Numbers */
+.floating-damage {
+  position: absolute;
+  top: 40%;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 1.8rem;
+  pointer-events: none;
+  z-index: 100;
+  animation: floatDamage 1.2s forwards cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.floating-damage.damage-dealt {
+  color: #fff;
+  text-shadow: 0 0 10px var(--accent-red), 0 0 20px var(--accent-red);
+}
+
+.floating-damage.crit {
+  color: var(--accent-gold);
+  font-size: 2.2rem;
+  text-shadow: 0 0 14px var(--accent-gold), 0 0 24px #fff;
+}
+
+.floating-damage.damage-taken {
+  color: var(--accent-red);
+  text-shadow: 0 0 10px #000;
+}
+
+.floating-damage.heal {
+  color: var(--accent-green);
+  text-shadow: 0 0 12px var(--accent-green-glow);
+}
+
+.floating-damage.gold {
+  color: var(--accent-gold);
+  text-shadow: 0 0 12px var(--accent-gold-glow);
+}
+
+@keyframes floatDamage {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.15);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(-35px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-55px) scale(0.85);
+  }
+}
+
+/* Screen Shake Effect */
+.shake-screen {
+  animation: screenShake 0.4s ease-in-out;
+}
+
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 4px); }
+  40% { transform: translate(6px, -4px); }
+  60% { transform: translate(-4px, -2px); }
+  80% { transform: translate(4px, 2px); }
+}
+
+/* --------------------------------------------------------------------------
+   Tactile Action Deck & Controls
+   -------------------------------------------------------------------------- */
+.action-deck-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.deck-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.deck-header h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.deck-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.85rem;
+}
+
+.action-btn {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 0.85rem 0.75rem;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  position: relative;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.action-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--border-highlight);
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.25);
+}
+
+.action-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.action-btn.attack {
+  border-color: rgba(239, 68, 68, 0.5);
+}
+.action-btn.attack:hover:not(:disabled) {
+  border-color: var(--accent-red);
+  box-shadow: 0 6px 20px var(--accent-red-glow);
+}
+
+.action-btn.defend {
+  border-color: rgba(6, 182, 212, 0.5);
+}
+.action-btn.defend:hover:not(:disabled) {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 6px 20px var(--accent-cyan-glow);
+}
+
+.action-btn.potion {
+  border-color: rgba(168, 85, 247, 0.5);
+}
+.action-btn.potion:hover:not(:disabled) {
+  border-color: var(--accent-purple);
+  box-shadow: 0 6px 20px var(--accent-purple-glow);
+}
+
+.action-btn.loot {
+  border-color: rgba(245, 158, 11, 0.5);
+}
+.action-btn.loot:hover:not(:disabled) {
+  border-color: var(--accent-gold);
+  box-shadow: 0 6px 20px var(--accent-gold-glow);
+}
+
+.key-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  color: var(--text-dim);
+}
+
+/* Advisor Trigger Bar */
+.advisor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px dashed rgba(168, 85, 247, 0.4);
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+}
+
+.advisor-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: #d8b4fe;
+}
+
+.advisor-btn {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  border: 1px solid #a855f7;
+  color: #fff;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.advisor-btn:hover {
+  box-shadow: 0 0 14px var(--accent-purple-glow);
+}
+
+/* --------------------------------------------------------------------------
+   Jev Brain Telemetry Dashboard (Right Column)
+   -------------------------------------------------------------------------- */
+.brain-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.brain-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.brain-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brain-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brain-title h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.latency-ticker {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Active Decision Display */
+.decision-callout {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.decision-action-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.decision-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+.decision-action-text {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+}
+
+.confidence-gauge {
+  text-align: right;
+}
+
+.confidence-val {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent-green);
+}
+
+/* Probability Bars */
+.prob-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.prob-section h4 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.prob-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.prob-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+}
+
+.prob-track {
+  width: 100%;
+  height: 8px;
+  background: #090d16;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.prob-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent-cyan);
+  transition: width 0.4s ease;
+}
+
+.prob-bar.attack { background: var(--accent-red); }
+.prob-bar.defend { background: var(--accent-cyan); }
+.prob-bar.potion { background: var(--accent-purple); }
+.prob-bar.flee { background: var(--accent-gold); }
+
+/* Threat / Value Meter */
+.meter-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.meter-track {
+  width: 100%;
+  height: 10px;
+  background: #090d16;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #ef4444 100%);
+  transition: width 0.4s ease;
+}
+
+/* Noul Decision Pills */
+.noul-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.noul-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.noul-title {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.noul-prob {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   Adventure Chronicle / Combat Log
+   -------------------------------------------------------------------------- */
+.chronicle-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.chronicle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chronicle-header h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.log-filters {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: var(--text-muted);
+}
+
+.log-scroll-area {
+  height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-right: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+/* Custom scrollbar */
+.log-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+.log-scroll-area::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.log-entry {
+  display: flex;
+  gap: 0.5rem;
+  line-height: 1.4;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.log-turn {
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.log-entry.combat { color: #fca5a5; }
+.log-entry.loot { color: #fde047; }
+.log-entry.danger { color: #f87171; font-weight: 600; }
+.log-entry.info { color: var(--text-muted); }
+
+/* --------------------------------------------------------------------------
+   Modal Overlays (Victory & Game Over)
+   -------------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-card {
+  transform: translateY(0);
+}
+
+.modal-icon {
+  font-size: 4rem;
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.modal-card.victory {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 40px var(--accent-gold-glow);
+}
+.modal-card.victory .modal-title {
+  color: var(--accent-gold);
+}
+
+.modal-card.game-over {
+  border-color: var(--accent-red);
+  box-shadow: 0 0 40px var(--accent-red-glow);
+}
+.modal-card.game-over .modal-title {
+  color: var(--accent-red);
+}
+
+.modal-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.modal-stat-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-stat-box .val {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.modal-stat-box .lbl {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}

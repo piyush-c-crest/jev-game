@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🍄 Super Mario Bros — Dual-Play (Player + Autonomous Agent)</title>
+    <link rel="stylesheet" href="/static/css/mario.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍄</text></svg>">
+</head>
+<body>
+
+    <!-- Header & Arcade Marquee -->
+    <header class="arcade-header">
+        <div class="marquee-brand">
+            <span class="mario-icon">🍄</span>
+            <div>
+                <h1 class="marquee-title">SUPER MARIO BROS</h1>
+                <p class="marquee-subtitle">Jev Plays the Game &bull; Dual-Play: Human &bull; Autonomous Bot</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="/rpg" class="btn-rpg-link" title="Switch to Jev Dungeon RPG">⚔️ Jev Plays the Game RPG</a>
+        </div>
+    </header>
+
+    <!-- Mode Selector & Quick Toggles -->
+    <div class="mode-bar">
+        <div class="mode-pills">
+            <button id="btnManualMode" class="mode-btn active" title="Play manually using keyboard/touch">
+                🎮 HUMAN PLAY
+            </button>
+            <button id="btnAgentMode" class="mode-btn agent-mode" title="Watch AI Agent play autonomously">
+                🤖 AGENT BOT PLAY
+            </button>
+        </div>
+
+        <!-- Difficulty Switcher (Default: Kaizo Extreme) -->
+        <div class="mode-pills">
+            <button id="btnDiffExtreme" class="mode-btn active" style="background: linear-gradient(135deg, #ff2a00 0%, #ff7700 100%); color: #fff; box-shadow: 0 0 14px rgba(255, 60, 0, 0.6);" title="World 8-4 Kaizo Extreme: 8 Dead Chasms, Low Ceilings, 26 Foes, 200s">
+                💀 KAİZO EXTREME
+            </button>
+            <button id="btnDiffNormal" class="mode-btn" title="World 1-1 Classic: Standard layout">
+                🟢 CLASSIC 1-1
+            </button>
+        </div>
+
+        <div class="quick-toggles">
+            <button id="btnToggleVision" class="toggle-pill" title="Toggle AI Vision & Collision Rays (V)">
+                👁️ VISION [V]
+            </button>
+            <button id="btnToggleAudio" class="toggle-pill active" title="Toggle 8-bit Music & SFX (M)">
+                🔊 AUDIO [M]
+            </button>
+            <button id="btnToggleCRT" class="toggle-pill active" title="Toggle CRT Screen Scanlines">
+                📺 CRT
+            </button>
+            <button id="btnRestart" class="toggle-pill" title="Restart Level (R)">
+                🔄 RESTART [R]
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Arcade Layout -->
+    <main class="arcade-container">
+
+        <!-- Arcade Cabinet Chassis -->
+        <section class="arcade-chassis">
+
+            <!-- NES Top Game HUD -->
+            <div class="nes-hud">
+                <div class="hud-item">
+                    <span class="hud-label">MARIO</span>
+                    <span id="hudScore" class="hud-val">000000</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">COINS</span>
+                    <span class="hud-val"><span class="coin-icon">🪙</span>x<span id="hudCoins">00</span></span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">WORLD</span>
+                    <span id="hudWorld" class="hud-val">1-1</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">TIME</span>
+                    <span id="hudTime" class="hud-val">400</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">LIVES</span>
+                    <span id="hudLives" class="hud-val">x3</span>
+                </div>
+            </div>
+
+            <!-- Screen Viewport -->
+            <div class="viewport-wrapper">
+                <canvas id="marioCanvas" width="512" height="480"></canvas>
+                <div id="crtOverlay" class="crt-overlay"></div>
+            </div>
+
+            <!-- Controls Legend Bar -->
+            <div class="cabinet-footer">
+                <div class="controls-legend">
+                    <span><span class="key-tag">A</span><span class="key-tag">D</span> or <span class="key-tag">&larr;</span><span class="key-tag">&rarr;</span> Run</span>
+                    <span><span class="key-tag">SPACE</span> or <span class="key-tag">W</span> Jump</span>
+                    <span><span class="key-tag">SHIFT</span> Dash/Sprint</span>
+                    <span><span class="key-tag">TAB</span> Switch Mode</span>
+                </div>
+            </div>
+
+            <!-- Mobile Touch Controls -->
+            <div class="mobile-controls">
+                <div class="d-pad">
+                    <button id="touchLeft" class="touch-btn">&larr;</button>
+                    <button id="touchRight" class="touch-btn">&rarr;</button>
+                </div>
+                <div class="action-buttons">
+                    <button id="touchSprint" class="touch-btn sprint-btn">B</button>
+                    <button id="touchJump" class="touch-btn jump-btn">A</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agent Brain Telemetry Side-Panel -->
+        <aside class="telemetry-panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <span class="pulse-dot"></span>
+                    <span>AGENT BRAIN TELEMETRY</span>
+                </div>
+            </div>
+
+            <!-- Current AI Objective -->
+            <div class="telemetry-card">
+                <div class="card-title">CURRENT OBJECTIVE</div>
+                <div id="botObjective" class="objective-badge">SURVEY_PATH</div>
+            </div>
+
+            <!-- Virtual Controller Status -->
+            <div class="telemetry-card">
+                <div class="card-title">VIRTUAL CONTROLLER INPUTS</div>
+                <div class="virtual-keys">
+                    <div id="vkeyLeft" class="vkey">&larr; LEFT</div>
+                    <div id="vkeyRight" class="vkey">&rarr; RIGHT</div>
+                    <div id="vkeyJump" class="vkey">&uarr; JUMP</div>
+                    <div id="vkeySprint" class="vkey">&empty; SPRINT</div>
+                </div>
+            </div>
+
+            <!-- Real-time Dynamics & Radar -->
+            <div class="telemetry-card">
+                <div class="card-title">SENSORY RADAR & METRICS</div>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">HAZARD RADAR</div>
+                        <div id="metricHazard" class="metric-value">CLEAR</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">MARIO VELOCITY</div>
+                        <div id="metricVel" class="metric-value">0.0, 0.0</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">POSITION (X)</div>
+                        <div id="metricX" class="metric-value">0 px</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">POWER STATE</div>
+                        <div id="metricPower" class="metric-value">SMALL</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- High Scores Leaderboard -->
+            <div class="telemetry-card leaderboard-section">
+                <div class="leaderboard-title">
+                    <span>🏆 HALL OF FAME</span>
+                    <button id="btnRefreshScores" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:10px;">↻</button>
+                </div>
+                <ul id="leaderboardList" class="scores-list">
+                    <li class="score-row agent-row">
+                        <span class="score-player">🤖 MarioBot-Pro</span>
+                        <span class="score-pts">12,850</span>
+                    </li>
+                    <li class="score-row">
+                        <span class="score-player">🎮 Player 1</span>
+                        <span class="score-pts">9,400</span>
+                    </li>
+                    <li class="score-row">
+                        <span class="score-player">🎮 Luigi</span>
+                        <span class="score-pts">5,200</span>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Load Game Engine & Audio Synthesizer Scripts -->
+    <script src="/static/js/mario_audio.js"></script>
+    <script src="/static/js/mario_agent.js"></script>
+    <script src="/static/js/mario_engine.js"></script>
+
+    <!-- UI Controller Initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const canvas = document.getElementById('marioCanvas');
+            const crtOverlay = document.getElementById('crtOverlay');
+
+            // Initialize Mario Engine & Agent
+            const engine = new MarioEngine(canvas, {
+                mode: 'manual',
+                onTelemetry: updateTelemetryUI
+            });
+            const agent = new MarioAgent();
+            engine.agent = agent;
+
+            // Difficulty Selection (Default: Kaizo Extreme)
+            let currentDifficulty = 'extreme';
+            const btnDiffExtreme = document.getElementById('btnDiffExtreme');
+            const btnDiffNormal = document.getElementById('btnDiffNormal');
+
+            function setDifficulty(diff) {
+                currentDifficulty = diff;
+                if (diff === 'extreme') {
+                    btnDiffExtreme.classList.add('active');
+                    btnDiffExtreme.style.background = 'linear-gradient(135deg, #ff2a00 0%, #ff7700 100%)';
+                    btnDiffExtreme.style.boxShadow = '0 0 14px rgba(255, 60, 0, 0.6)';
+                    btnDiffNormal.classList.remove('active');
+                    btnDiffNormal.style.background = 'transparent';
+                    btnDiffNormal.style.boxShadow = 'none';
+                } else {
+                    btnDiffNormal.classList.add('active');
+                    btnDiffNormal.style.background = '#00a800';
+                    btnDiffNormal.style.boxShadow = '0 0 12px rgba(0, 168, 0, 0.5)';
+                    btnDiffExtreme.classList.remove('active');
+                    btnDiffExtreme.style.background = 'transparent';
+                    btnDiffExtreme.style.boxShadow = 'none';
+                }
+                engine.loadLevel(diff);
+            }
+
+            btnDiffExtreme.addEventListener('click', () => setDifficulty('extreme'));
+            btnDiffNormal.addEventListener('click', () => setDifficulty('normal'));
+
+            // Load Level Data & Start (Default: Kaizo Extreme!)
+            await engine.loadLevel('extreme');
+            engine.start();
+
+            // HUD Elements
+            const hudScore = document.getElementById('hudScore');
+            const hudCoins = document.getElementById('hudCoins');
+            const hudWorld = document.getElementById('hudWorld');
+            const hudTime = document.getElementById('hudTime');
+            const hudLives = document.getElementById('hudLives');
+
+            // Telemetry Elements
+            const botObjective = document.getElementById('botObjective');
+            const vkeyLeft = document.getElementById('vkeyLeft');
+            const vkeyRight = document.getElementById('vkeyRight');
+            const vkeyJump = document.getElementById('vkeyJump');
+            const vkeySprint = document.getElementById('vkeySprint');
+            const metricHazard = document.getElementById('metricHazard');
+            const metricVel = document.getElementById('metricVel');
+            const metricX = document.getElementById('metricX');
+            const metricPower = document.getElementById('metricPower');
+
+            // Mode Toggle Buttons
+            const btnManual = document.getElementById('btnManualMode');
+            const btnAgent = document.getElementById('btnAgentMode');
+            const btnVision = document.getElementById('btnToggleVision');
+            const btnAudio = document.getElementById('btnToggleAudio');
+            const btnCRT = document.getElementById('btnToggleCRT');
+            const btnRestart = document.getElementById('btnRestart');
+
+            function setGameMode(mode) {
+                engine.setMode(mode);
+                if (mode === 'manual') {
+                    btnManual.classList.add('active');
+                    btnAgent.classList.remove('active');
+                } else {
+                    btnAgent.classList.add('active');
+                    btnManual.classList.remove('active');
+                    // Automatically turn on vision rays when agent mode is engaged
+                    if (!engine.showVision) {
+                        engine.showVision = true;
+                        btnVision.classList.add('active');
+                    }
+                }
+            }
+
+            btnManual.addEventListener('click', () => setGameMode('manual'));
+            btnAgent.addEventListener('click', () => setGameMode('agent'));
+
+            btnVision.addEventListener('click', () => {
+                const active = engine.toggleVision();
+                btnVision.classList.toggle('active', active);
+            });
+
+            btnAudio.addEventListener('click', () => {
+                if (window.marioAudio) {
+                    const muted = window.marioAudio.toggleMute();
+                    btnAudio.classList.toggle('active', !muted);
+                    btnAudio.innerHTML = muted ? '🔇 AUDIO [M]' : '🔊 AUDIO [M]';
+                }
+            });
+
+            btnCRT.addEventListener('click', () => {
+                crtOverlay.classList.toggle('disabled');
+                btnCRT.classList.toggle('active', !crtOverlay.classList.contains('disabled'));
+            });
+
+            btnRestart.addEventListener('click', () => {
+                engine.loadLevel(currentDifficulty);
+            });
+
+            // Keyboard Controls
+            window.addEventListener('keydown', (e) => {
+                if (window.marioAudio && window.marioAudio.ctx && window.marioAudio.ctx.state === 'suspended') {
+                    window.marioAudio.ctx.resume();
+                }
+
+                if (e.code === 'ArrowRight' || e.code === 'KeyD') {
+                    if (engine.mode === 'manual') engine.setKey('right', true);
+                } else if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
+                    if (engine.mode === 'manual') engine.setKey('left', true);
+                } else if (e.code === 'Space' || e.code === 'KeyW' || e.code === 'ArrowUp') {
+                    e.preventDefault();
+                    if (engine.mode === 'manual') engine.setKey('jump', true);
+                } else if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyJ') {
+                    if (engine.mode === 'manual') engine.setKey('sprint', true);
+                } else if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+                    if (engine.mode === 'manual') engine.setKey('down', true);
+                } else if (e.code === 'KeyV') {
+                    btnVision.click();
+                } else if (e.code === 'KeyM') {
+                    btnAudio.click();
+                } else if (e.code === 'KeyR') {
+                    btnRestart.click();
+                } else if (e.code === 'Tab') {
+                    e.preventDefault();
+                    setGameMode(engine.mode === 'manual' ? 'agent' : 'manual');
+                }
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (engine.mode === 'manual') {
+                    if (e.code === 'ArrowRight' || e.code === 'KeyD') engine.setKey('right', false);
+                    else if (e.code === 'ArrowLeft' || e.code === 'KeyA') engine.setKey('left', false);
+                    else if (e.code === 'Space' || e.code === 'KeyW' || e.code === 'ArrowUp') engine.setKey('jump', false);
+                    else if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyJ') engine.setKey('sprint', false);
+                    else if (e.code === 'ArrowDown' || e.code === 'KeyS') engine.setKey('down', false);
+                }
+            });
+
+            // Touch Controls for Mobile
+            function bindTouch(btnId, keyName) {
+                const el = document.getElementById(btnId);
+                if (!el) return;
+                const startHandler = (e) => {
+                    e.preventDefault();
+                    if (window.marioAudio) window.marioAudio.init();
+                    if (engine.mode === 'manual') engine.setKey(keyName, true);
+                };
+                const endHandler = (e) => {
+                    e.preventDefault();
+                    if (engine.mode === 'manual') engine.setKey(keyName, false);
+                };
+                el.addEventListener('touchstart', startHandler, { passive: false });
+                el.addEventListener('touchend', endHandler, { passive: false });
+                el.addEventListener('mousedown', startHandler);
+                el.addEventListener('mouseup', endHandler);
+            }
+            bindTouch('touchLeft', 'left');
+            bindTouch('touchRight', 'right');
+            bindTouch('touchJump', 'jump');
+            bindTouch('touchSprint', 'sprint');
+
+            // Telemetry UI updater (called every frame from engine)
+            function updateTelemetryUI(t) {
+                hudScore.textContent = String(t.score).padStart(6, '0');
+                hudCoins.textContent = String(t.coins).padStart(2, '0');
+                hudWorld.textContent = t.world;
+                hudTime.textContent = String(t.time).padStart(3, '0');
+                hudLives.textContent = `x${t.lives}`;
+
+                botObjective.textContent = t.agentObjective;
+
+                vkeyLeft.classList.toggle('active', t.keys.left);
+                vkeyRight.classList.toggle('active', t.keys.right);
+                vkeyJump.classList.toggle('active', t.keys.jump);
+                vkeySprint.classList.toggle('active', t.keys.sprint);
+
+                if (t.hazardDist < 50) {
+                    metricHazard.textContent = `DANGER (${Math.round(t.hazardDist)}px)`;
+                    metricHazard.style.color = '#ff3d00';
+                } else if (t.hazardDist < 110) {
+                    metricHazard.textContent = `WARN (${Math.round(t.hazardDist)}px)`;
+                    metricHazard.style.color = '#ffb300';
+                } else {
+                    metricHazard.textContent = 'CLEAR';
+                    metricHazard.style.color = 'var(--terminal-green)';
+                }
+
+                metricVel.textContent = `${t.marioVx}, ${t.marioVy}`;
+                metricX.textContent = `${t.marioX} px`;
+                metricPower.textContent = t.isSuper ? 'SUPER' : 'SMALL';
+            }
+
+            // Fetch and render high scores
+            async function loadLeaderboard() {
+                try {
+                    const resp = await fetch('/api/mario/scores');
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        const list = document.getElementById('leaderboardList');
+                        list.innerHTML = '';
+                        (data.scores || []).slice(0, 5).forEach(s => {
+                            const li = document.createElement('li');
+                            li.className = `score-row ${s.mode === 'agent' ? 'agent-row' : ''}`;
+                            li.innerHTML = `
+                                <span class="score-player">${s.mode === 'agent' ? '🤖' : '🎮'} ${s.player_name}</span>
+                                <span class="score-pts">${s.score.toLocaleString()}</span>
+                            `;
+                            list.appendChild(li);
+                        });
+                    }
+                } catch (e) {
+                    console.error("Leaderboard load failed:", e);
+                }
+            }
+            document.getElementById('btnRefreshScores').addEventListener('click', loadLeaderboard);
+            loadLeaderboard();
+        });
+    </script>
+</body>
+</html>

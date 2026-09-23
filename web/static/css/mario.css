@@ -1,0 +1,553 @@
+/* ==========================================================================
+   mario.css - Super Mario Bros Retro Arcade Cabinet & Telemetry HUD
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
+
+:root {
+    --bg-dark: #0c0d14;
+    --chassis-bg: #141722;
+    --chassis-border: #23283a;
+    --arcade-red: #e52521;
+    --arcade-gold: #fbd000;
+    --arcade-blue: #0026e6;
+    --arcade-green: #43b047;
+    --terminal-cyan: #00f0ff;
+    --terminal-amber: #ffb300;
+    --terminal-green: #39ff14;
+    --text-white: #f0f4fc;
+    --text-muted: #8b9bb4;
+    --font-pixel: 'Press Start 2P', monospace;
+    --font-tech: 'Share Tech Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    font-family: var(--font-tech);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    background-image: 
+        radial-gradient(circle at 50% 10%, rgba(229, 37, 33, 0.12) 0%, transparent 60%),
+        linear-gradient(180deg, #090a10 0%, #11131c 100%);
+}
+
+/* Header & Arcade Marquee */
+.arcade-header {
+    width: 100%;
+    max-width: 1200px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--chassis-border);
+    background: rgba(16, 18, 27, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+.marquee-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mario-icon {
+    font-size: 26px;
+    filter: drop-shadow(0 0 8px rgba(229, 37, 33, 0.6));
+    animation: iconBounce 2s infinite ease-in-out;
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+.marquee-title {
+    font-family: var(--font-pixel);
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--arcade-gold);
+    text-shadow: 2px 2px 0px var(--arcade-red), 0 0 10px rgba(251, 208, 0, 0.4);
+}
+
+.marquee-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-rpg-link {
+    background: #1c2236;
+    color: var(--terminal-cyan);
+    border: 1px solid #2d3856;
+    padding: 6px 12px;
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-rpg-link:hover {
+    background: #252e4a;
+    border-color: var(--terminal-cyan);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+/* Dual-Mode Selector Bar */
+.mode-bar {
+    width: 100%;
+    max-width: 1200px;
+    margin: 12px 0 6px 0;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.mode-pills {
+    display: flex;
+    background: #0f121d;
+    border: 1px solid var(--chassis-border);
+    border-radius: 8px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.mode-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mode-btn:hover {
+    color: var(--text-white);
+}
+
+.mode-btn.active {
+    background: var(--arcade-red);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(229, 37, 33, 0.5);
+}
+
+.mode-btn.agent-mode.active {
+    background: linear-gradient(135deg, #0088ff 0%, #00b4d8 100%);
+    box-shadow: 0 0 14px rgba(0, 180, 216, 0.5);
+}
+
+.quick-toggles {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggle-pill {
+    background: #171b29;
+    border: 1px solid var(--chassis-border);
+    color: var(--text-muted);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toggle-pill:hover {
+    color: var(--text-white);
+    border-color: #3b435d;
+}
+
+.toggle-pill.active {
+    color: var(--terminal-green);
+    border-color: var(--terminal-green);
+    background: rgba(57, 255, 20, 0.1);
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.2);
+}
+
+/* Main Arcade Layout (Cabinet & Side Telemetry) */
+.arcade-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 10px 16px 24px 16px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    align-items: start;
+}
+
+@media (max-width: 990px) {
+    .arcade-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Cabinet Chassis */
+.arcade-chassis {
+    background: var(--chassis-bg);
+    border: 3px solid var(--chassis-border);
+    border-radius: 12px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Classic NES Top HUD */
+.nes-hud {
+    background: #000000;
+    padding: 12px 20px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    font-family: var(--font-pixel);
+    font-size: 11px;
+    line-height: 1.5;
+    border-bottom: 3px solid #1c2132;
+}
+
+.hud-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hud-label {
+    color: #ffffff;
+    margin-bottom: 2px;
+    letter-spacing: 1px;
+}
+
+.hud-val {
+    color: var(--arcade-gold);
+    letter-spacing: 1px;
+}
+
+.coin-icon {
+    display: inline-block;
+    color: var(--arcade-gold);
+    animation: coinSpin 1.2s infinite steps(4);
+}
+
+/* Screen Viewport & CRT filter */
+.viewport-wrapper {
+    position: relative;
+    width: 100%;
+    background: #6888fc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#marioCanvas {
+    width: 100%;
+    aspect-ratio: 256 / 240;
+    max-height: 540px;
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* Optional CRT Scanlines Effect */
+.crt-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+.crt-overlay.disabled {
+    opacity: 0;
+}
+
+/* Controls Legend Bar */
+.cabinet-footer {
+    background: #0d0f17;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    border-top: 2px solid var(--chassis-border);
+}
+
+.controls-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    color: var(--text-muted);
+}
+
+.key-tag {
+    background: #1c2132;
+    color: var(--text-white);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    border: 1px solid #333d5a;
+    margin-right: 4px;
+}
+
+/* On-Screen Mobile Controls */
+.mobile-controls {
+    display: none;
+    padding: 12px 18px;
+    background: #10131f;
+    border-top: 1px solid var(--chassis-border);
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .mobile-controls {
+        display: flex;
+    }
+}
+
+.d-pad {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.touch-btn {
+    background: #23293e;
+    color: #ffffff;
+    border: 2px solid #3a4566;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    font-family: var(--font-pixel);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+}
+
+.touch-btn:active {
+    background: var(--arcade-red);
+    border-color: #ff5252;
+}
+
+.touch-btn.jump-btn {
+    border-radius: 50%;
+    background: #a81c18;
+}
+
+.touch-btn.sprint-btn {
+    border-radius: 50%;
+    background: #c68a00;
+}
+
+/* Agent Brain Telemetry Panel */
+.telemetry-panel {
+    background: var(--chassis-bg);
+    border: 2px solid var(--chassis-border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--chassis-border);
+    padding-bottom: 10px;
+}
+
+.panel-title {
+    font-family: var(--font-pixel);
+    font-size: 11px;
+    color: var(--terminal-cyan);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--terminal-green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--terminal-green);
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.telemetry-card {
+    background: #0d0f18;
+    border: 1px solid #1e2436;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.card-title {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.objective-badge {
+    display: inline-block;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--terminal-cyan);
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    padding: 6px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+}
+
+/* Virtual Input Controller Status */
+.virtual-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.vkey {
+    background: #171b29;
+    border: 1px solid #28304a;
+    color: #5d6c8f;
+    font-family: var(--font-pixel);
+    font-size: 8px;
+    padding: 8px 4px;
+    text-align: center;
+    border-radius: 4px;
+    transition: all 0.1s ease;
+}
+
+.vkey.active {
+    background: var(--terminal-green);
+    color: #000000;
+    border-color: #ffffff;
+    box-shadow: 0 0 10px var(--terminal-green);
+    font-weight: bold;
+}
+
+/* Stats Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.metric-item {
+    background: #121522;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #1e2538;
+}
+
+.metric-label {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.metric-value {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--arcade-gold);
+    margin-top: 2px;
+}
+
+/* Leaderboard Section */
+.leaderboard-section {
+    border-top: 1px solid var(--chassis-border);
+    padding-top: 12px;
+}
+
+.leaderboard-title {
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--arcade-gold);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.scores-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.score-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    background: #101320;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border-left: 3px solid var(--arcade-gold);
+}
+
+.score-row.agent-row {
+    border-left-color: var(--terminal-cyan);
+}
+
+.score-player {
+    color: var(--text-white);
+}
+
+.score-pts {
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    color: var(--arcade-gold);
+}

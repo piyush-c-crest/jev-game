@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 Jev Plays the Game — Web RPG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/game.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Header Navigation -->
+    <header class="game-header">
+      <div class="brand">
+        <div class="brand-icon">⚔️</div>
+        <div>
+          <h1>Jev Plays the Game</h1>
+          <div class="subtitle">System One Autonomous AI &bull; Web RPG</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Mode Switcher -->
+        <div class="mode-toggle-group">
+          <button id="modeManualBtn" class="mode-btn active" title="You control the adventurer directly with buttons & hotkeys">
+            🎮 Manual Play
+          </button>
+          <button id="modeAgentBtn" class="mode-btn" title="Jev AI makes all decisions autonomously turn-by-turn">
+            🤖 Jev Agent
+          </button>
+        </div>
+
+        <!-- Agent Auto-Play Controls (Visible in Agent Mode) -->
+        <div id="agentControls" class="agent-speed-control" style="display: none;">
+          <button id="agentPlayPauseBtn" class="icon-btn primary" title="Auto-Play / Pause">
+            <span id="playPauseIcon">▶</span> <span id="playPauseText">Play</span>
+          </button>
+          <button id="agentStepBtn" class="icon-btn" title="Advance exactly 1 turn">
+            ⏭ Step
+          </button>
+          <select id="agentSpeedSelect" title="Turn delay">
+            <option value="2000">Slow (2.0s)</option>
+            <option value="1100" selected>Normal (1.1s)</option>
+            <option value="550">Fast (0.5s)</option>
+            <option value="220">Turbo (0.2s)</option>
+          </select>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button id="soundToggleBtn" class="icon-btn" title="Toggle Sound FX">
+          🔊 Sound
+        </button>
+
+        <!-- Link to Super Mario -->
+        <a href="/mario" class="icon-btn" style="text-decoration:none; display:flex; align-items:center; gap:4px;" title="Play Super Mario Bros">
+          🍄 Mario
+        </a>
+
+        <!-- New Game Button -->
+        <button id="newGameBtn" class="icon-btn primary" title="Start a fresh run">
+          🔄 New Run
+        </button>
+      </div>
+    </header>
+
+    <!-- Dungeon Minimap / Progression Bar -->
+    <section class="minimap-bar">
+      <div class="floor-badge">
+        <span class="badge-icon">🏰</span>
+        <span id="floorBadgeText">Floor 1 of 5</span>
+      </div>
+
+      <div id="roomProgressTrack" class="room-progress-track">
+        <!-- Room nodes injected dynamically by game.js -->
+        <div class="room-node current">1</div>
+        <div class="room-node">2</div>
+        <div class="room-node">3</div>
+        <div class="room-node boss">💀</div>
+      </div>
+
+      <div class="floor-badge">
+        <span class="badge-icon">⏳</span>
+        <span id="turnCounterText">Turn 1</span>
+      </div>
+    </section>
+
+    <!-- Main Game Grid -->
+    <main class="game-grid">
+
+      <!-- Left Column: Visual Battle Arena + Action Deck + Log -->
+      <section class="arena-panel">
+
+        <!-- Stage Card -->
+        <div id="mainStage" class="stage-card">
+          <!-- Room Title & Encounter Type -->
+          <div class="room-header-info">
+            <div class="room-title-box">
+              <h2 id="roomName">🚪 Damp Dungeon Entrance</h2>
+              <p id="roomDesc">Mossy cobblestones slick with moisture; distant water droplets echo.</p>
+            </div>
+            <span id="encounterPhasePill" class="phase-pill combat">COMBAT</span>
+          </div>
+
+          <!-- Combatants Battler Stage -->
+          <div id="combatantsStage" class="combatants-stage">
+            <!-- Hero Battler Card -->
+            <div class="battler-card hero">
+              <div class="battler-portrait">🧙‍♂️</div>
+              <div class="battler-name">Jev Adventurer</div>
+              <div class="hp-bar-container">
+                <div class="hp-meta">
+                  <span>HP</span>
+                  <span id="heroHpText">100 / 100</span>
+                </div>
+                <div class="hp-track">
+                  <div id="heroHpFill" class="hp-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+              <div class="battler-stats-row">
+                <span>⚔️ Atk <b id="heroAtk">15</b></span>
+                <span>🛡️ Def <b id="heroDef">10</b></span>
+                <span>🧪 Potions <b id="heroPotions">2</b></span>
+                <span>💰 Gold <b id="heroGold">0</b></span>
+              </div>
+            </div>
+
+            <!-- VS Badge (Combat only) -->
+            <div id="vsBadge" class="vs-badge">VS</div>
+
+            <!-- Enemy / Encounter Battler Card -->
+            <div id="enemyCard" class="battler-card enemy">
+              <div id="enemyPortrait" class="battler-portrait">👹</div>
+              <div id="enemyName" class="battler-name">Goblin</div>
+              <div id="enemyHpContainer" class="hp-bar-container">
+                <div class="hp-meta">
+                  <span>HP</span>
+                  <span id="enemyHpText">30 / 30</span>
+                </div>
+                <div class="hp-track">
+                  <div id="enemyHpFill" class="hp-fill danger" style="width: 100%;"></div>
+                </div>
+              </div>
+              <div id="enemyStatsRow" class="battler-stats-row">
+                <span>⚔️ Atk <b id="enemyAtk">8</b></span>
+                <span>🛡️ Def <b id="enemyDef">3</b></span>
+                <span>💰 Loot <b id="enemyGold">10g</b></span>
+              </div>
+            </div>
+
+            <!-- Non-combat Chamber Display (Hidden during combat) -->
+            <div id="chamberStage" class="chamber-stage" style="display: none;">
+              <div id="chamberIcon" class="chamber-icon">💎</div>
+              <div id="chamberDescription" class="chamber-desc">An ornate gilded chest rests on a stone pedestal.</div>
+            </div>
+          </div>
+
+          <!-- Floating Damage Text Container -->
+          <div id="floatingTextContainer"></div>
+        </div>
+
+        <!-- Action Command Deck -->
+        <div class="action-deck-card">
+          <div class="deck-header">
+            <h3>Command Deck</h3>
+            <span id="deckModeNotice" style="font-size: 0.8rem; color: var(--accent-cyan); font-family: var(--font-mono);">
+              🎮 Your Turn — Select an Action:
+            </span>
+          </div>
+
+          <!-- Dynamic Action Buttons -->
+          <div id="actionButtonsContainer" class="deck-buttons-grid">
+            <!-- Buttons injected based on encounter state -->
+            <button class="action-btn attack" data-action="ATTACK">
+              <span>⚔️ Attack</span>
+              <span class="key-badge">[1]</span>
+            </button>
+            <button class="action-btn defend" data-action="DEFEND">
+              <span>🛡️ Defend</span>
+              <span class="key-badge">[2]</span>
+            </button>
+            <button class="action-btn potion" data-action="USE_POTION">
+              <span>🧪 Drink Potion</span>
+              <span class="key-badge">[3]</span>
+            </button>
+            <button class="action-btn" data-action="FLEE">
+              <span>🏃 Flee</span>
+              <span class="key-badge">[4]</span>
+            </button>
+          </div>
+
+          <!-- Advisor Bar (Consult Jev Oracle in Manual Mode) -->
+          <div id="advisorBar" class="advisor-bar">
+            <div class="advisor-info">
+              <span>🔮</span>
+              <span id="advisorText">Want guidance? Ask Jev's System One model for tactical probability advice.</span>
+            </div>
+            <button id="askAdvisorBtn" class="advisor-btn">
+              <span>🧠 Consult Jev</span>
+              <span class="key-badge">[A]</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Adventure Chronicle / Combat Log -->
+        <div class="chronicle-card">
+          <div class="chronicle-header">
+            <h3>Adventure Chronicle</h3>
+            <div class="log-filters">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="combat">Combat</button>
+              <button class="filter-btn" data-filter="loot">Loot</button>
+              <button class="filter-btn" data-filter="danger">Danger</button>
+            </div>
+          </div>
+          <div id="logScrollArea" class="log-scroll-area">
+            <!-- Log entries injected here -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Column: Jev Brain Telemetry Dashboard -->
+      <aside class="brain-panel">
+        <div class="brain-card">
+          <div class="brain-header">
+            <div class="brain-title">
+              <span>🧠</span>
+              <h3>Jev System One Brain</h3>
+            </div>
+            <span id="latencyTicker" class="latency-ticker">⚡ -- ms</span>
+          </div>
+
+          <!-- Current Decision Callout -->
+          <div class="decision-callout">
+            <div class="decision-action-box">
+              <span class="decision-label">Active Choice</span>
+              <span id="brainActionText" class="decision-action-text">READY</span>
+            </div>
+            <div class="confidence-gauge">
+              <div class="decision-label">Confidence</div>
+              <span id="brainConfidenceText" class="confidence-val">--%</span>
+            </div>
+          </div>
+
+          <!-- Multi-choice Probability Distribution Bars -->
+          <div class="prob-section">
+            <h4>Choice Probabilities</h4>
+            <div id="probBarsContainer" style="display: flex; flex-direction: column; gap: 0.65rem;">
+              <div class="prob-row">
+                <div class="prob-labels"><span>ATTACK</span><span id="pValAttack">0%</span></div>
+                <div class="prob-track"><div id="pBarAttack" class="prob-bar attack" style="width: 0%;"></div></div>
+              </div>
+              <div class="prob-row">
+                <div class="prob-labels"><span>DEFEND</span><span id="pValDefend">0%</span></div>
+                <div class="prob-track"><div id="pBarDefend" class="prob-bar defend" style="width: 0%;"></div></div>
+              </div>
+              <div class="prob-row">
+                <div class="prob-labels"><span>USE_POTION</span><span id="pValPotion">0%</span></div>
+                <div class="prob-track"><div id="pBarPotion" class="prob-bar potion" style="width: 0%;"></div></div>
+              </div>
+              <div class="prob-row">
+                <div class="prob-labels"><span>FLEE</span><span id="pValFlee">0%</span></div>
+                <div class="prob-track"><div id="pBarFlee" class="prob-bar flee" style="width: 0%;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Threat / Value / Risk Meter -->
+          <div class="meter-box">
+            <div class="meter-header">
+              <span id="meterLabel">Threat Level</span>
+              <span id="meterValText">0.0 / 10</span>
+            </div>
+            <div class="meter-track">
+              <div id="meterFill" class="meter-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Noul Proactive Decision Pills -->
+          <div class="noul-grid">
+            <div class="noul-card">
+              <span class="noul-title">Pre-emptive Potion</span>
+              <span id="noulPotionProb" class="noul-prob">--%</span>
+            </div>
+            <div class="noul-card">
+              <span class="noul-title">Flee Worthiness</span>
+              <span id="noulFleeProb" class="noul-prob">--%</span>
+            </div>
+          </div>
+
+          <!-- Advisor Banner when consulted -->
+          <div id="advisorBanner" style="display: none; background: rgba(168, 85, 247, 0.15); border: 1px solid var(--accent-purple); padding: 0.75rem; border-radius: 8px;">
+            <div style="font-size: 0.75rem; color: #d8b4fe; font-weight: 700; text-transform: uppercase;">Oracle Recommendation</div>
+            <div id="advisorRecText" style="font-size: 0.95rem; font-weight: 700; color: #fff; margin: 0.25rem 0;">--</div>
+            <button id="executeAdvisorMoveBtn" class="advisor-btn" style="width: 100%; justify-content: center; margin-top: 0.4rem;">
+              ⚡ Follow Jev's Move
+            </button>
+          </div>
+
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- Modals -->
+    <!-- Victory Modal -->
+    <div id="victoryModal" class="modal-overlay">
+      <div class="modal-card victory">
+        <div class="modal-icon">👑</div>
+        <h2 class="modal-title">VICTORY ACHIEVED!</h2>
+        <p style="color: var(--text-muted);">The Ancient Dragon has been conquered. The dungeon has yielded its greatest treasures to you!</p>
+        <div class="modal-stats">
+          <div class="modal-stat-box"><span id="vTurns" class="val">0</span><span class="lbl">Total Turns</span></div>
+          <div class="modal-stat-box"><span id="vGold" class="val">0</span><span class="lbl">Gold Looted</span></div>
+          <div class="modal-stat-box"><span id="vKills" class="val">0</span><span class="lbl">Monsters Slain</span></div>
+          <div class="modal-stat-box"><span id="vRooms" class="val">0</span><span class="lbl">Rooms Cleared</span></div>
+        </div>
+        <button id="vRestartBtn" class="icon-btn primary" style="padding: 0.75rem 2rem; font-size: 1.1rem;">
+          ⚔️ Play Another Run
+        </button>
+      </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal-overlay">
+      <div class="modal-card game-over">
+        <div class="modal-icon">💀</div>
+        <h2 class="modal-title">YOU PERISHED</h2>
+        <p id="gameOverCauseText" style="color: var(--text-muted);">The dungeon's horrors proved too lethal this time.</p>
+        <div class="modal-stats">
+          <div class="modal-stat-box"><span id="dTurns" class="val">0</span><span class="lbl">Turns Survived</span></div>
+          <div class="modal-stat-box"><span id="dFloor" class="val">1</span><span class="lbl">Floor Reached</span></div>
+          <div class="modal-stat-box"><span id="dGold" class="val">0</span><span class="lbl">Gold Lost</span></div>
+          <div class="modal-stat-box"><span id="dKills" class="val">0</span><span class="lbl">Enemies Killed</span></div>
+        </div>
+        <button id="dRestartBtn" class="icon-btn primary" style="padding: 0.75rem 2rem; font-size: 1.1rem;">
+          🔄 Try Again
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/js/audio.js"></script>
+  <script src="/static/js/game.js"></script>
+</body>
+</html>
