@@ -56,26 +56,40 @@ python main.py
 
 ```
 jev-game/
-├── .env                  # TYPESAFE_API_KEY
+├── .env                  # Environment variables (TYPESAFE_API_KEY)
+├── .gitignore             # Git ignore patterns
 ├── README.md             # Documentation
 ├── requirements.txt      # Python dependencies
-├── server.py             # FastAPI Web Server (serves Web RPG)
-├── game_session.py       # Session manager (player, dungeon, turns, serialization)
-├── action_resolver.py    # Game mechanics resolver (human & agent actions)
-├── jev_engine.py         # TypeSafe AI Jev System One integration
-├── state_builder.py      # Natural language state serializer
-├── world.py              # Dungeon generation, entities, rooms
-├── game_loop.py          # Terminal CLI turn orchestrator
-├── main.py               # Terminal CLI entry point
-├── ui.py                 # Terminal Rich UI
-├── test_web_api.py       # Automated verification test suite
+├── main.py               # Terminal CLI RPG entry point
+├── server.py             # FastAPI Web Server (serves Web RPG & Mario)
+├── docs/                 # Specifications and implementation plans
+│   ├── PLAN.md
+│   ├── super_mario_implementation_plan.md
+│   └── web_game_implementation_plan.md
+├── src/                  # Application source packages
+│   ├── mario/            # Super Mario platformer backend
+│   │   ├── __init__.py
+│   │   └── mario_level.py # World 1-1 Classic & Kaizo Extreme generation
+│   └── rpg/              # Jev Plays the Game RPG backend
+│       ├── __init__.py
+│       ├── action_resolver.py # Game mechanics resolver (human & agent)
+│       ├── game_loop.py      # Terminal CLI turn orchestrator
+│       ├── game_session.py   # Session state & turn manager
+│       ├── jev_engine.py     # TypeSafe AI Jev System One integration
+│       ├── state_builder.py  # Natural language state serializer
+│       ├── ui.py             # Rich terminal user interface
+│       └── world.py          # Dungeon generation, entities, rooms
+├── tests/                # Automated pytest verification test suite
+│   ├── __init__.py
+│   ├── conftest.py       # Test configuration and path fixtures
+│   ├── test_mario_engine.py # Mario physics, levels, and API tests
+│   └── test_web_api.py   # Jev RPG session and FastAPI endpoint tests
 └── web/                  # Browser Frontend (Vanilla ES6, HTML5, CSS3)
     ├── index.html        # Web RPG application layout
+    ├── mario.html        # Super Mario arcade layout
     └── static/
-        ├── css/game.css  # Dark fantasy styling & animations
-        └── js/
-            ├── audio.js  # Web Audio API sound synthesizer
-            └── game.js   # Game client controller & dual-play engine
+        ├── css/          # Stylesheets (game.css, mario.css)
+        └── js/           # Scripts (audio, engines, agents)
 ```
 
 ---

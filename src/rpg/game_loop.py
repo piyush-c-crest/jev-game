@@ -6,11 +6,11 @@ Coordinates the Dungeon, State Builder, Jev Engine, Action Resolver, and UI.
 from __future__ import annotations
 import sys
 import time
-from world import JevPlayer, Dungeon, Room, RoomType
-from state_builder import build_combat_context, build_explore_context, build_fork_context
-from jev_engine import jev_combat_decision, jev_explore_decision, jev_fork_decision
-from action_resolver import resolve_combat, resolve_explore, resolve_fork
-from ui import (
+from .world import JevPlayer, Dungeon, Room, RoomType
+from .state_builder import build_combat_context, build_explore_context, build_fork_context
+from .jev_engine import jev_combat_decision, jev_explore_decision, jev_fork_decision
+from .action_resolver import resolve_combat, resolve_explore, resolve_fork
+from .ui import (
     console,
     render_game_screen,
     display_intro_banner,

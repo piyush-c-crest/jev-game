@@ -4,11 +4,14 @@ test_web_api.py - Comprehensive verification of GameSession and FastAPI endpoint
 
 import sys
 import os
+from pathlib import Path
 
-# Ensure current directory is on sys.path
-sys.path.insert(0, os.path.abspath("."))
+# Ensure repository root is on sys.path
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
-from game_session import GameSession
+from src.rpg import GameSession
 from server import app
 from starlette.testclient import TestClient
 

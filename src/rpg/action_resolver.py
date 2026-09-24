@@ -9,8 +9,8 @@ from dataclasses import dataclass, field
 import random
 import re
 
-from world import JevPlayer, Room, Enemy, RoomType
-from jev_engine import CombatDecision, ExploreDecision, ForkDecision
+from .world import JevPlayer, Room, Enemy, RoomType
+from .jev_engine import CombatDecision, ExploreDecision, ForkDecision
 
 
 def strip_markup(text: str) -> str:

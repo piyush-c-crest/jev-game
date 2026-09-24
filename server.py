@@ -17,15 +17,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-
-from game_session import GameSession
-from mario_level import get_world_1_1
 import time
 
 # Load environment variables (.env)
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+from src.rpg import GameSession
+from src.mario import get_world_1_1
+
 WEB_DIR = BASE_DIR / "web"
 STATIC_DIR = WEB_DIR / "static"
 

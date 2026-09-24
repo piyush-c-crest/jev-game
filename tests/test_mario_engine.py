@@ -7,9 +7,11 @@ import os
 from pathlib import Path
 
 # Add project root to sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
-from mario_level import get_world_1_1
+from src.mario import get_world_1_1
 from server import app
 from starlette.testclient import TestClient
 

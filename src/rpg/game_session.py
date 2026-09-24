@@ -8,9 +8,9 @@ import copy
 import random
 from typing import Any, Optional
 
-from world import JevPlayer, Dungeon, Room, RoomType, Enemy
-from state_builder import build_combat_context, build_explore_context, build_fork_context
-from jev_engine import (
+from .world import JevPlayer, Dungeon, Room, RoomType, Enemy
+from .state_builder import build_combat_context, build_explore_context, build_fork_context
+from .jev_engine import (
     jev_combat_decision,
     jev_explore_decision,
     jev_fork_decision,
@@ -18,7 +18,7 @@ from jev_engine import (
     ExploreDecision,
     ForkDecision,
 )
-from action_resolver import resolve_combat, resolve_explore, resolve_fork, TurnOutcome, strip_markup
+from .action_resolver import resolve_combat, resolve_explore, resolve_fork, TurnOutcome, strip_markup
 
 
 class GameSession:

@@ -15,7 +15,14 @@ try:
 except Exception:
     pass
 
-from game_loop import run_game
+from pathlib import Path
+
+# Ensure root directory is on sys.path
+BASE_DIR = Path(__file__).resolve().parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+from src.rpg import run_game
 
 
 def main():

@@ -21,8 +21,8 @@ from rich.table import Table
 from rich.text import Text
 from rich import box
 
-from world import JevPlayer, Room, Enemy, RoomType
-from jev_engine import CombatDecision, ExploreDecision, ForkDecision
+from .world import JevPlayer, Room, Enemy, RoomType
+from .jev_engine import CombatDecision, ExploreDecision, ForkDecision
 
 console = Console(highlight=False)
 

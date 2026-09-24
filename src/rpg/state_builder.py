@@ -3,7 +3,7 @@ state_builder.py - Converts dungeon and player state into rich natural language 
 """
 
 from __future__ import annotations
-from world import JevPlayer, Room, Enemy, RoomType
+from .world import JevPlayer, Room, Enemy, RoomType
 
 
 def build_combat_context(player: JevPlayer, enemy: Enemy, room: Room) -> str:
