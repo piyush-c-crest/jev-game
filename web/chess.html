@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>♟️ JEV vs JEV Autonomous Chess Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/game.css">
+  <link rel="stylesheet" href="/static/css/chess.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♟️</text></svg>">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Header Navigation -->
+    <header class="game-header">
+      <div class="brand">
+        <div class="brand-icon">♟️</div>
+        <div>
+          <h1>JEV vs JEV Chess Arena</h1>
+          <div class="subtitle">System One Autonomous AI &bull; 1v1 Grandmaster Match</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Sound Toggle -->
+        <button id="soundToggleBtn" class="icon-btn" title="Toggle Sound FX (M)">
+          🔊 Sound
+        </button>
+
+        <!-- Cross Links -->
+        <a href="/rpg" class="icon-btn" style="text-decoration:none; display:flex; align-items:center; gap:4px;" title="Play JEV Dungeon RPG">
+          ⚔️ RPG
+        </a>
+        <a href="/mario" class="icon-btn" style="text-decoration:none; display:flex; align-items:center; gap:4px;" title="Play Super Mario Bros">
+          🍄 Mario
+        </a>
+
+        <!-- New Game Button -->
+        <button id="resetBtn" class="icon-btn primary" title="Reset match to starting setup (R)">
+          🔄 New Match
+        </button>
+      </div>
+    </header>
+
+    <!-- Match Status Bar -->
+    <section class="minimap-bar" style="justify-content: space-between;">
+      <div class="floor-badge">
+        <span class="badge-icon">👑</span>
+        <span id="matchTurnText">Turn 1 &bull; White to Move</span>
+      </div>
+
+      <div class="floor-badge">
+        <span class="badge-icon">⚡</span>
+        <span id="matchStatusText">⚔️ In Progress</span>
+      </div>
+    </section>
+
+    <!-- Main Chess Arena Layout -->
+    <main class="chess-arena-layout">
+
+      <!-- Column 1: Vertical Evaluation Bar -->
+      <aside class="eval-bar-wrapper" title="JEV Real-time Position Evaluation">
+        <div id="evalScoreBadge" class="eval-badge">0.0</div>
+        <div class="eval-track">
+          <div id="evalFillWhite" class="eval-fill-white" style="height: 50%;"></div>
+        </div>
+      </aside>
+
+      <!-- Column 2: Board & Players -->
+      <section class="board-column">
+
+        <!-- Black Player Card (Top) -->
+        <div id="blackCard" class="player-card black">
+          <div class="player-card-left">
+            <div class="player-avatar">♚</div>
+            <div class="player-meta">
+              <h3>
+                Jev Black (Kronos)
+                <span id="blackMaterialDiff" class="material-diff-badge"></span>
+              </h3>
+              <div class="player-persona-tag">Counter-Attacking Grandmaster &bull; Dynamic Resilience</div>
+              <div id="blackCapturedRack" class="player-captured-rack"></div>
+            </div>
+          </div>
+          <div id="blackStatusPill" class="player-status-pill">Ready</div>
+        </div>
+
+        <!-- Central 8x8 Board -->
+        <div id="boardFrame" class="board-frame">
+          <!-- 64 squares dynamically populated by chess_app.js -->
+        </div>
+
+        <!-- White Player Card (Bottom) -->
+        <div id="whiteCard" class="player-card white active-turn">
+          <div class="player-card-left">
+            <div class="player-avatar">♔</div>
+            <div class="player-meta">
+              <h3>
+                Jev White (Apollo)
+                <span id="whiteMaterialDiff" class="material-diff-badge"></span>
+              </h3>
+              <div class="player-persona-tag">Classical Aggressive Grandmaster &bull; Central Control</div>
+              <div id="whiteCapturedRack" class="player-captured-rack"></div>
+            </div>
+          </div>
+          <div id="whiteStatusPill" class="player-status-pill active">Ready</div>
+        </div>
+
+        <!-- Playback Controls -->
+        <div class="chess-playback-bar">
+          <div class="playback-btn-group">
+            <button id="playPauseBtn" class="icon-btn primary" title="Auto-Play / Pause (Space)">
+              <span id="playPauseIcon">▶</span> <span id="playPauseText">Auto-Play</span>
+            </button>
+            <button id="stepBtn" class="icon-btn" title="Advance 1 Move (S or Right Arrow)">
+              ⏭ Step
+            </button>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <select id="speedSelect" title="Turn speed delay" style="background:var(--bg-card); color:var(--text-main); border:1px solid var(--border-color); border-radius:6px; padding:0.35rem 0.5rem; font-family:var(--font-mono); font-size:0.8rem;">
+              <option value="2500">Slow (2.5s)</option>
+              <option value="1200" selected>Normal (1.2s)</option>
+              <option value="600">Fast (0.6s)</option>
+              <option value="200">Turbo (0.2s)</option>
+            </select>
+
+            <button id="flipBtn" class="icon-btn" title="Flip Board Perspective (F)">
+              🔁 Flip
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Column 3: Telemetry & Chronicle -->
+      <section class="telemetry-column">
+
+        <!-- Jev Brain Telemetry Card -->
+        <div class="telemetry-card">
+          <div class="telemetry-header">
+            <h3><span>🧠</span> JEV Brain Telemetry</h3>
+            <span id="latencyTicker" class="latency-ticker">⚡ -- ms</span>
+          </div>
+
+          <!-- Active Agent & Action -->
+          <div class="brain-decision-box">
+            <div class="decision-label">Active Agent: <span id="telemetryAgentBadge" style="font-weight:700;">WHITE</span></div>
+            <div id="telemetryMoveText" class="decision-action">READY</div>
+            <div class="decision-confidence">
+              <span>Confidence:</span>
+              <strong id="telemetryConfidenceText">--%</strong>
+            </div>
+          </div>
+
+          <!-- Candidate Moves Probabilities -->
+          <div class="telemetry-section">
+            <div class="section-title">Candidate Move Probabilities:</div>
+            <div id="telemetryProbContainer" class="prob-bars-container">
+              <div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 1rem;">
+                Awaiting first move...
+              </div>
+            </div>
+          </div>
+
+          <!-- Tactical Sharpness Meter -->
+          <div class="telemetry-section">
+            <div class="meter-header">
+              <span>Tactical Sharpness</span>
+              <strong id="sharpnessValText">--%</strong>
+            </div>
+            <div class="threat-track">
+              <div id="sharpnessFill" class="threat-fill" style="width: 25%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PGN Move History Chronicle -->
+        <div class="chronicle-card">
+          <div class="chronicle-header">
+            <span>📜 Move Chronicle (PGN)</span>
+          </div>
+          <div id="chronicleScrollArea" class="chronicle-table-container">
+            <table class="chronicle-table">
+              <thead>
+                <tr>
+                  <th style="width: 20%;">#</th>
+                  <th style="width: 40%;">White</th>
+                  <th style="width: 40%;">Black</th>
+                </tr>
+              </thead>
+              <tbody id="chronicleTableBody">
+                <!-- Move rows dynamically injected -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Game Over / Victory Modal -->
+  <div id="resultModal" class="modal-overlay">
+    <div class="modal-card">
+      <div id="modalTitle" class="modal-title victory">👑 Checkmate!</div>
+      <p id="modalMessage" class="modal-body-text">
+        The match has concluded.
+      </p>
+
+      <div class="modal-stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Total Turns</div>
+          <div id="modalStatsTurns" class="stat-val">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Conquering Side</div>
+          <div id="modalStatsWinner" class="stat-val">White</div>
+        </div>
+      </div>
+
+      <button id="modalRestartBtn" class="modal-btn">Play Another Match</button>
+    </div>
+  </div>
+
+  <!-- Scripts in dependency order -->
+  <script src="/static/js/vendor/chess.min.js"></script>
+  <script src="/static/js/chess_pieces.js"></script>
+  <script src="/static/js/chess_audio.js"></script>
+  <script src="/static/js/chess_app.js"></script>
+
+</body>
+</html>

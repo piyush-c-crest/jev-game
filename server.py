@@ -8,7 +8,7 @@ import argparse
 import os
 from pathlib import Path
 import sys
-from typing import Optional
+from typing import Optional, Any
 import webbrowser
 
 from dotenv import load_dotenv
@@ -28,6 +28,7 @@ if str(BASE_DIR) not in sys.path:
 
 from src.rpg import GameSession
 from src.mario import get_world_1_1
+from src.chess import ChessSession, ChessAgentProfile
 
 WEB_DIR = BASE_DIR / "web"
 STATIC_DIR = WEB_DIR / "static"
@@ -80,6 +81,29 @@ class MarioScoreRequest(BaseModel):
     time_left: int = 0
     mode: str = "manual"  # "manual" or "agent"
     status: str = "cleared"  # "cleared" or "game_over"
+
+
+# Active Chess session instance
+active_chess_session: ChessSession = ChessSession()
+
+
+class ChessNewGameRequest(BaseModel):
+    starting_fen: Optional[str] = None
+    white_persona: Optional[str] = None
+    black_persona: Optional[str] = None
+
+
+class ChessStepRequest(BaseModel):
+    fen: Optional[str] = None
+    legal_moves: Optional[list[Any]] = None
+    in_check: bool = False
+    history: Optional[list[str]] = None
+    is_game_over: bool = False
+    game_over_reason: Optional[str] = None
+
+
+ChessNewGameRequest.model_rebuild()
+ChessStepRequest.model_rebuild()
 
 
 # REST Endpoints - Mario Platformer
@@ -164,6 +188,41 @@ def health_check():
     }
 
 
+# REST Endpoints - Jev vs Jev Chess
+@app.post("/api/chess/new")
+def new_chess_game(req: ChessNewGameRequest):
+    """Start or initialize a new JEV vs JEV Chess match."""
+    global active_chess_session
+    active_chess_session = ChessSession(starting_fen=req.starting_fen or "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+    return active_chess_session.get_state()
+
+
+@app.get("/api/chess/state")
+def get_chess_state():
+    """Fetch current Chess match state, dual agent decisions, and move log."""
+    return active_chess_session.get_state()
+
+
+@app.post("/api/chess/step")
+def step_chess_game(req: ChessStepRequest):
+    """Trigger the current active JEV agent (White or Black) to analyze and make a move."""
+    return active_chess_session.execute_agent_step(
+        fen=req.fen,
+        legal_moves=req.legal_moves,
+        in_check=req.in_check,
+        client_history=req.history,
+        is_game_over=req.is_game_over,
+        game_over_reason=req.game_over_reason,
+    )
+
+
+@app.post("/api/chess/reset")
+def reset_chess_game():
+    """Reset the Chess board and match session to the starting position."""
+    active_chess_session.reset()
+    return active_chess_session.get_state()
+
+
 # Static assets & HTML serving
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -187,6 +246,15 @@ def rpg_index():
     if not index_file.exists():
         return {"error": "web/index.html not found."}
     return FileResponse(str(index_file))
+
+
+@app.get("/chess")
+def chess_index():
+    """Serve the JEV vs JEV Chess Arena UI."""
+    chess_file = WEB_DIR / "chess.html"
+    if not chess_file.exists():
+        return {"error": "web/chess.html not found."}
+    return FileResponse(str(chess_file))
 
 
 def main():

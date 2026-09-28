@@ -17,7 +17,14 @@ A dark fantasy dungeon RPG featuring **TypeSafe AI's Jev (System One) model**. P
    - Full playback controls: Play/Pause (`Space`), Step 1 Turn, and Speed Slider (Slow, Normal, Fast, Turbo).
    - Seamlessly toggle between Manual and Agent mode at any moment during a run.
 
-3. **💻 Terminal CLI Mode**:
+3. **♟️ JEV vs JEV Chess Arena (`/chess`)**:
+   - Two autonomous JEV AI agents play Chess against each other (JEV White vs JEV Black, 1v1)!
+   - **White Agent (Apollo)**: Classical aggressive grandmaster focused on initiative and center control.
+   - **Black Agent (Kronos)**: Counter-attacking grandmaster focused on dynamic resilience and sharp defense.
+   - Interactive 8x8 SVG board with legal move validation (`chess.js`), move highlights, check indicators, dynamic evaluation advantage bar, captured pieces racks, PGN move chronicle, and dual real-time JEV Brain Telemetry.
+   - Playback controls: Auto-Play, Pause, Step 1 Move, Speed slider, Board flip, and Reset.
+
+4. **💻 Terminal CLI Mode**:
    - The classic rich terminal interface with ASCII art, health bars, and live logs.
 
 ---
@@ -67,6 +74,11 @@ jev-game/
 │   ├── super_mario_implementation_plan.md
 │   └── web_game_implementation_plan.md
 ├── src/                  # Application source packages
+│   ├── chess/            # JEV vs JEV Chess backend
+│   │   ├── __init__.py
+│   │   ├── chess_session.py   # Match session & turn manager
+│   │   ├── jev_chess_engine.py# Dual agent decision engine
+│   │   └── state_builder.py   # FEN & move criteria serializer
 │   ├── mario/            # Super Mario platformer backend
 │   │   ├── __init__.py
 │   │   └── mario_level.py # World 1-1 Classic & Kaizo Extreme generation
@@ -82,14 +94,16 @@ jev-game/
 ├── tests/                # Automated pytest verification test suite
 │   ├── __init__.py
 │   ├── conftest.py       # Test configuration and path fixtures
+│   ├── test_chess_engine.py # Chess FEN, session, and API tests
 │   ├── test_mario_engine.py # Mario physics, levels, and API tests
 │   └── test_web_api.py   # Jev RPG session and FastAPI endpoint tests
 └── web/                  # Browser Frontend (Vanilla ES6, HTML5, CSS3)
+    ├── chess.html        # JEV vs JEV Chess Arena layout
     ├── index.html        # Web RPG application layout
     ├── mario.html        # Super Mario arcade layout
     └── static/
-        ├── css/          # Stylesheets (game.css, mario.css)
-        └── js/           # Scripts (audio, engines, agents)
+        ├── css/          # Stylesheets (game.css, mario.css, chess.css)
+        └── js/           # Scripts (audio, engines, agents, pieces)
 ```
 
 ---
