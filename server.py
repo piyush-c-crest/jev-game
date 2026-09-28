@@ -258,9 +258,11 @@ def chess_index():
 
 
 def main():
+    default_port = int(os.environ.get("PORT", 8000))
+    default_host = os.environ.get("HOST", "0.0.0.0")
     parser = argparse.ArgumentParser(description="Start Jev Plays the Game Web Server.")
-    parser.add_argument("--port", "-p", type=int, default=8000, help="Server port (default: 8000)")
-    parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address (default: 127.0.0.1)")
+    parser.add_argument("--port", "-p", type=int, default=default_port, help=f"Server port (default: {default_port})")
+    parser.add_argument("--host", type=str, default=default_host, help=f"Host address (default: {default_host})")
     parser.add_argument("--no-browser", action="store_true", help="Do not automatically open browser")
     args = parser.parse_args()
 
@@ -269,7 +271,9 @@ def main():
     url = f"http://{args.host}:{args.port}"
     print(f"🎮 Starting Jev Plays the Game Web Server at {url}")
 
-    if not args.no_browser:
+    # Only attempt to open browser if not in a cloud environment (e.g. Railway)
+    is_cloud = "RAILWAY_ENVIRONMENT" in os.environ or "PORT" in os.environ
+    if not args.no_browser and not is_cloud:
         try:
             webbrowser.open(url)
         except Exception:
